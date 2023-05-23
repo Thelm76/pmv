@@ -2,6 +2,7 @@ import 'package:args/command_runner.dart';
 import 'package:glob/glob.dart';
 import 'package:glob/list_local_fs.dart';
 import 'package:path/path.dart';
+import 'package:pubspec/pubspec.dart';
 
 class AnalyseSubPackageCommand extends Command<void> {
   AnalyseSubPackageCommand() {
@@ -31,8 +32,16 @@ class AnalyseSubPackageCommand extends Command<void> {
       await _analysePubFile(path: entity.path);
     }
   }
-}
 
-Future<void> _analysePubFile({required String path}) async {
-  print(path);
+  Future<void> _analysePubFile({required String path}) async {
+    // load pubSpec
+    final pubSpec = await PubSpec.loadFile(path);
+
+    print("=== ${pubSpec.name} ===");
+    pubSpec.dependencies.forEach((key, DependencyReference value) {
+      if (value is! PathReference && value is! SdkReference) {
+        print("$key: ${value.toString()}");
+      }
+    });
+  }
 }
