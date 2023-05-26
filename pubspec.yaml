@@ -1,7 +1,6 @@
-name: fpm
-description: A sample command-line application.
+name: pmv
+description: PMV is a CLI tool used to help manage package version in Dart projects with multiple packages
 version: 1.0.0
-# repository: https://github.com/my_org/my_repo
 
 environment:
   sdk: ^3.0.1
@@ -9,6 +8,7 @@ environment:
 # Add regular dependencies here.
 dependencies:
   args: ^2.4.1
+  collection: any
   glob: ^2.1.2
   path: ^1.8.0
   pubspec: ^2.3.0
