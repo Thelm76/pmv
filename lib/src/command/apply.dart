@@ -1,10 +1,11 @@
 import 'package:args/command_runner.dart';
 import 'package:glob/glob.dart';
 import 'package:glob/list_local_fs.dart';
+import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart';
 import 'package:pubspec/pubspec.dart';
 
-class ApplySubPackageCommand extends Command<void> {
+class ApplySubPackageCommand extends Command<int> {
   ApplySubPackageCommand() {
     argParser.addOption(
       'source',
@@ -25,7 +26,7 @@ class ApplySubPackageCommand extends Command<void> {
   String get invocation => 'pmv apply -s ./pmv_pubspec.yaml';
 
   @override
-  Future<void> run() async {
+  Future<int> run() async {
     final rootFile = argResults?['source'] as String;
 
     //Read the root pubspec
@@ -66,5 +67,7 @@ class ApplySubPackageCommand extends Command<void> {
       //Update yaml file
       pubSpec.save(entity.parent);
     }
+
+    return ExitCode.success.code;
   }
 }

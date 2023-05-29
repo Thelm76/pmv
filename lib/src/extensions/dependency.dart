@@ -1,5 +1,5 @@
 import 'package:collection/collection.dart';
-import 'package:pmv/entities/dependency.dart';
+import 'package:pmv/src/entities/dependency.dart';
 
 extension DependencyExtension on Dependency {
   Dependency update({

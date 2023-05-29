@@ -1,13 +1,14 @@
 import 'package:args/command_runner.dart';
 import 'package:glob/glob.dart';
 import 'package:glob/list_local_fs.dart';
+import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart';
-import 'package:pmv/entities/dependency.dart';
-import 'package:pmv/extensions/dependency.dart';
-import 'package:pmv/file.dart';
+import 'package:pmv/src/entities/dependency.dart';
+import 'package:pmv/src/extensions/dependency.dart';
+import 'package:pmv/src/file.dart';
 import 'package:pubspec/pubspec.dart';
 
-class AnalyseSubPackageCommand extends Command<void> {
+class AnalyseSubPackageCommand extends Command<int> {
   AnalyseSubPackageCommand() {
     argParser.addOption(
       'output',
@@ -27,7 +28,7 @@ class AnalyseSubPackageCommand extends Command<void> {
   String get invocation => 'pmv analyse -o ./result.txt';
 
   @override
-  Future<void> run() async {
+  Future<int> run() async {
     final output = argResults?['output'] as String;
     Map<String, Dependency> allDependencies = {};
     Map<String, Dependency> allDevDependencies = {};
@@ -71,6 +72,8 @@ class AnalyseSubPackageCommand extends Command<void> {
       message: '\noverrides_dependencies:\n',
     );
     await _writeReport(file, allOverrideDependencies);
+
+    return ExitCode.success.code;
   }
 
   Map<String, Dependency> _analysePubFile({
