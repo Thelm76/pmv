@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:pmv/command/analyse.dart';
+import 'package:pmv/command/apply.dart';
 
 void main(List<String> args) {
   final bool verbose = args.contains('-v') || args.contains('--verbose');
@@ -11,6 +12,7 @@ void main(List<String> args) {
     'CLI tool for managing pubspec package version',
   )
     ..addCommand(AnalyseSubPackageCommand())
+    ..addCommand(ApplySubPackageCommand())
     ..argParser.addFlag(
       'verbose',
       abbr: 'v',
