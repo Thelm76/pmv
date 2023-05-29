@@ -7,7 +7,9 @@ void main(List<String> args) {
   final bool verbose = args.contains('-v') || args.contains('--verbose');
 
   final CommandRunner<void> runner = CommandRunner<void>(
-      'pmv', 'CLI tool for managing pubspec package version')
+    'pmv',
+    'CLI tool for managing pubspec package version',
+  )
     ..addCommand(AnalyseSubPackageCommand())
     ..argParser.addFlag(
       'verbose',
