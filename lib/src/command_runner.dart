@@ -4,6 +4,7 @@ import 'package:cli_completion/cli_completion.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:pmv/src/command/analyse.dart';
 import 'package:pmv/src/command/apply.dart';
+import 'package:pmv/src/version.dart';
 
 class PMVCliCommandRunner extends CompletionCommandRunner<int> {
   PMVCliCommandRunner({
@@ -15,6 +16,11 @@ class PMVCliCommandRunner extends CompletionCommandRunner<int> {
         ) {
     addCommand(AnalyseSubPackageCommand());
     addCommand(ApplySubPackageCommand());
+    argParser.addFlag(
+      'version',
+      negatable: false,
+      help: 'Prints the version of pmv.',
+    );
     argParser.addFlag(
       'verbose',
       abbr: 'v',
@@ -86,7 +92,13 @@ class PMVCliCommandRunner extends CompletionCommandRunner<int> {
     }
 
     // Run the command or show version
-    final int? exitCode = await super.runCommand(topLevelResults);
+    late final int? exitCode;
+    if (topLevelResults['version'] == true) {
+      _logger.info(packageVersion);
+      exitCode = ExitCode.success.code;
+    } else {
+      exitCode = await super.runCommand(topLevelResults);
+    }
 
     return exitCode;
   }

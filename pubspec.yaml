@@ -1,6 +1,6 @@
 name: pmv
 description: PMV is a CLI tool used to help manage package version in Dart projects with multiple packages
-version: 0.0.1
+version: 0.0.2
 repository: https://github.com/Chonli/pmv
 issue_tracker: https://github.com/Chonli/pmv/issues
 
@@ -18,5 +18,10 @@ dependencies:
   pubspec: ^2.3.0
 
 dev_dependencies:
+  build_runner: ^2.4.4
+  build_version: ^2.1.1
   lints: ^2.1.0
   test: ^1.24.3
+
+executables:
+  pmv:

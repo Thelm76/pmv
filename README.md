@@ -12,14 +12,6 @@ pmv analyse -o result.txt
 pmv apply -s pmv_pubspec.yaml
 ```
 
-## Install
-This tool is not already distribute on pub.dev but you can install with the following commands:
-```dart
-git clone "https://github.com/Chonli/pmv"
-cd pmv
-dart pub global activate --source path .
-```
-
 #### TODO
 - Improve log trace (mason_logger ?)
 - Add CI
