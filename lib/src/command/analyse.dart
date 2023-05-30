@@ -9,7 +9,7 @@ import 'package:pmv/src/file.dart';
 import 'package:pubspec/pubspec.dart';
 
 class AnalyseSubPackageCommand extends Command<int> {
-  AnalyseSubPackageCommand() {
+  AnalyseSubPackageCommand(this._logger) {
     argParser.addOption(
       'output',
       abbr: 'o',
@@ -17,6 +17,8 @@ class AnalyseSubPackageCommand extends Command<int> {
       defaultsTo: './analyse.txt',
     );
   }
+
+  final Logger _logger;
 
   @override
   String get name => 'analyse';
@@ -34,46 +36,59 @@ class AnalyseSubPackageCommand extends Command<int> {
     Map<String, Dependency> allDevDependencies = {};
     Map<String, Dependency> allOverrideDependencies = {};
 
-    // Analyse dependencies
-    final pubspecFiles = Glob(join('.', '**', 'pubspec.yaml'));
-    for (final entity in pubspecFiles.listSync()) {
-      final pubSpec = await PubSpec.loadFile(entity.path);
-      final projectName = pubSpec.name ?? 'unknow';
+    final progress = _logger.progress('Analyse in progress');
 
-      allDependencies = _analysePubFile(
-        projectName: projectName,
-        pubSpecDep: pubSpec.dependencies,
-        old: allDependencies,
-      );
-      allDevDependencies = _analysePubFile(
+    try {
+      // Analyse dependencies
+      final pubspecFiles = Glob(join('.', '**', 'pubspec.yaml'));
+      for (final entity in pubspecFiles.listSync()) {
+        final pubSpec = await PubSpec.loadFile(entity.path);
+        final projectName = pubSpec.name ?? 'unknow';
+
+        allDependencies = _analysePubFile(
           projectName: projectName,
-          pubSpecDep: pubSpec.devDependencies,
-          old: allDevDependencies);
-      allOverrideDependencies = _analysePubFile(
-        projectName: projectName,
-        pubSpecDep: pubSpec.dependencyOverrides,
-        old: allOverrideDependencies,
+          pubSpecDep: pubSpec.dependencies,
+          old: allDependencies,
+        );
+        allDevDependencies = _analysePubFile(
+            projectName: projectName,
+            pubSpecDep: pubSpec.devDependencies,
+            old: allDevDependencies);
+        allOverrideDependencies = _analysePubFile(
+          projectName: projectName,
+          pubSpecDep: pubSpec.dependencyOverrides,
+          old: allOverrideDependencies,
+        );
+      }
+
+      // Write repport
+      final file = FileHelper(output, _logger);
+      file.write(message: 'Analyse of ${DateTime.now()}\n', append: false);
+      file.write(
+        message: '\ndependencies:\n',
       );
+
+      await _writeReport(file, allDependencies);
+      file.write(
+        message: '\ndev_dependencies:\n',
+      );
+      await _writeReport(file, allDevDependencies);
+      file.write(
+        message: '\noverrides_dependencies:\n',
+      );
+      await _writeReport(file, allOverrideDependencies);
+
+      _logger.info('Analyse write in file $output');
+      progress.complete('Analyse done!');
+
+      return ExitCode.success.code;
+    } on Exception catch (error, st) {
+      progress.fail();
+      _logger.err(error.toString());
+      _logger.detail(st.toString());
+
+      return -1;
     }
-
-    // Write repport
-    final file = FileHelper(output);
-    file.write(message: 'Analyse of ${DateTime.now()}\n', append: false);
-    file.write(
-      message: '\ndependencies:\n',
-    );
-
-    await _writeReport(file, allDependencies);
-    file.write(
-      message: '\ndev_dependencies:\n',
-    );
-    await _writeReport(file, allDevDependencies);
-    file.write(
-      message: '\noverrides_dependencies:\n',
-    );
-    await _writeReport(file, allOverrideDependencies);
-
-    return ExitCode.success.code;
   }
 
   Map<String, Dependency> _analysePubFile({
@@ -130,10 +145,3 @@ class AnalyseSubPackageCommand extends Command<int> {
     file.endSection();
   }
 }
-
-// afficher un résultat avec les differences, les en commun
-
-
-
-
-

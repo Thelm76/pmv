@@ -14,8 +14,8 @@ class PMVCliCommandRunner extends CompletionCommandRunner<int> {
           'pmv',
           'CLI tool for managing pubspec package version',
         ) {
-    addCommand(AnalyseSubPackageCommand());
-    addCommand(ApplySubPackageCommand());
+    addCommand(AnalyseSubPackageCommand(_logger));
+    addCommand(ApplySubPackageCommand(_logger));
     argParser.addFlag(
       'version',
       negatable: false,
