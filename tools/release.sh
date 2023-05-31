@@ -16,4 +16,7 @@ version=$1
 #update version in pubspec.yaml
 sed -i '' "s/^version: .*/version: $version/" pubspec.yaml
 #update version in version.dart
-dart run build_runner build
+dart run build_runner build --delete-conflicting-outputs
+
+#generate changelog 
+changelog_cli generate --start `git describe --tags --abbrev=0` --printer markdown
