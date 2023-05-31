@@ -6,6 +6,12 @@ class Dependency {
 
   final String namePub;
   final List<DepVersion> versions;
+
+  bool get isMultiFile =>
+      versions.length > 1 ||
+      versions.any(
+        (dep) => dep.files.length > 1,
+      );
 }
 
 class DepVersion {

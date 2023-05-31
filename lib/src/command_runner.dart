@@ -38,9 +38,11 @@ class PMVCliCommandRunner extends CompletionCommandRunner<int> {
   Future<int> run(Iterable<String> args) async {
     try {
       final topLevelResults = parse(args);
+
       if (topLevelResults['verbose'] == true) {
         _logger.level = Level.verbose;
       }
+
       return await runCommand(topLevelResults) ?? ExitCode.success.code;
     } on FormatException catch (e, stackTrace) {
       // On format errors, show the commands error message, root usage and
@@ -50,6 +52,7 @@ class PMVCliCommandRunner extends CompletionCommandRunner<int> {
         ..err('$stackTrace')
         ..info('')
         ..info(usage);
+
       return ExitCode.usage.code;
     } on UsageException catch (e) {
       // On usage errors, show the commands usage message and
@@ -58,6 +61,7 @@ class PMVCliCommandRunner extends CompletionCommandRunner<int> {
         ..err(e.message)
         ..info('')
         ..info(e.usage);
+
       return ExitCode.usage.code;
     }
   }
@@ -67,6 +71,7 @@ class PMVCliCommandRunner extends CompletionCommandRunner<int> {
     // Fast track completion command
     if (topLevelResults.command?.name == 'completion') {
       await super.runCommand(topLevelResults);
+
       return ExitCode.success.code;
     }
 
@@ -74,16 +79,19 @@ class PMVCliCommandRunner extends CompletionCommandRunner<int> {
     _logger
       ..detail('Argument information:')
       ..detail('  Top level options:');
+
     for (final option in topLevelResults.options) {
       if (topLevelResults.wasParsed(option)) {
         _logger.detail('  - $option: ${topLevelResults[option]}');
       }
     }
+
     if (topLevelResults.command != null) {
       final commandResult = topLevelResults.command!;
       _logger
         ..detail('  Command: ${commandResult.name}')
         ..detail('    Command options:');
+
       for (final option in commandResult.options) {
         if (commandResult.wasParsed(option)) {
           _logger.detail('    - $option: ${commandResult[option]}');
@@ -93,6 +101,7 @@ class PMVCliCommandRunner extends CompletionCommandRunner<int> {
 
     // Run the command or show version
     late final int? exitCode;
+
     if (topLevelResults['version'] == true) {
       _logger.info(packageVersion);
       exitCode = ExitCode.success.code;
