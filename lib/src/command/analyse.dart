@@ -97,7 +97,7 @@ class AnalyseSubPackageCommand extends Command<int> {
         multiOnly: multiOnly,
       );
       file.write(
-        message: '\noverrides_dependencies:\n',
+        message: 'dependency_overrides:\n',
       );
       await _writeReport(
         file: file,
