@@ -2,8 +2,10 @@
 
 **Features**
 
+- **ci**: Add basic github ci
 - Add TU and analyse flag
-- improve log
+- Improve log
+- Add example page 
 
 ## 0.0.2
 
