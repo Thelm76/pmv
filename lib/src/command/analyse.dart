@@ -106,8 +106,8 @@ class AnalyseSubPackageCommand extends Command<int> {
         multiOnly: multiOnly,
       );
 
-      _logger.info('Analyse write in file $output');
       progress.complete('Analyse done!');
+      _logger.info('Analyse write in file $output');
 
       return ExitCode.success.code;
     } on Exception catch (error, st) {
@@ -159,7 +159,8 @@ class AnalyseSubPackageCommand extends Command<int> {
   }) async {
     file.startSection();
     dependencies.forEach((key, value) {
-      if (!multiOnly && value.isMultiFile) {
+      print("$key: ${value.isMultiFile}");
+      if (!multiOnly || value.isMultiFile) {
         file.write(
           message: '$key:\n',
         );
