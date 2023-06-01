@@ -1,9 +1,9 @@
-import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:cli_completion/cli_completion.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:pmv/src/command/analyse.dart';
 import 'package:pmv/src/command/apply.dart';
+import 'package:pmv/src/command/upgrade.dart';
 import 'package:pmv/src/version.dart';
 
 class PMVCliCommandRunner extends CompletionCommandRunner<int> {
@@ -16,6 +16,7 @@ class PMVCliCommandRunner extends CompletionCommandRunner<int> {
         ) {
     addCommand(AnalyseSubPackageCommand(_logger));
     addCommand(ApplySubPackageCommand(_logger));
+    addCommand(UpgradeRootPackageCommand(_logger));
     argParser.addFlag(
       'version',
       negatable: false,
@@ -43,7 +44,12 @@ class PMVCliCommandRunner extends CompletionCommandRunner<int> {
         _logger.level = Level.verbose;
       }
 
-      return await runCommand(topLevelResults) ?? ExitCode.success.code;
+      if (topLevelResults['version'] == true) {
+        _logger.info(packageVersion);
+        return ExitCode.success.code;
+      } else {
+        return await runCommand(topLevelResults) ?? ExitCode.success.code;
+      }
     } on FormatException catch (e, stackTrace) {
       // On format errors, show the commands error message, root usage and
       // exit with an error code
@@ -64,51 +70,5 @@ class PMVCliCommandRunner extends CompletionCommandRunner<int> {
 
       return ExitCode.usage.code;
     }
-  }
-
-  @override
-  Future<int?> runCommand(ArgResults topLevelResults) async {
-    // Fast track completion command
-    if (topLevelResults.command?.name == 'completion') {
-      await super.runCommand(topLevelResults);
-
-      return ExitCode.success.code;
-    }
-
-    // Verbose logs
-    _logger
-      ..detail('Argument information:')
-      ..detail('  Top level options:');
-
-    for (final option in topLevelResults.options) {
-      if (topLevelResults.wasParsed(option)) {
-        _logger.detail('  - $option: ${topLevelResults[option]}');
-      }
-    }
-
-    if (topLevelResults.command != null) {
-      final commandResult = topLevelResults.command!;
-      _logger
-        ..detail('  Command: ${commandResult.name}')
-        ..detail('    Command options:');
-
-      for (final option in commandResult.options) {
-        if (commandResult.wasParsed(option)) {
-          _logger.detail('    - $option: ${commandResult[option]}');
-        }
-      }
-    }
-
-    // Run the command or show version
-    late final int? exitCode;
-
-    if (topLevelResults['version'] == true) {
-      _logger.info(packageVersion);
-      exitCode = ExitCode.success.code;
-    } else {
-      exitCode = await super.runCommand(topLevelResults);
-    }
-
-    return exitCode;
   }
 }
