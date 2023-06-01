@@ -1,3 +1,13 @@
+## 0.0.4
+
+**Features**
+
+- Add command upgrade version in root file
+
+**Bug Fixes**
+
+- dependency_overrides wording
+
 ## 0.0.3
 
 **Features**

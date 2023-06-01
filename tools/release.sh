@@ -7,9 +7,9 @@ if ! [ -d .git ]; then
   exit
 fi
 
-if [ -z "$1" ]
-  then
+if [ -z "$1" ]; then
     echo "No argument supplied, enter new version number"
+    exit
 fi
 
 version=$1
