@@ -1,7 +1,7 @@
 import 'package:args/command_runner.dart';
 import 'package:cli_completion/cli_completion.dart';
 import 'package:mason_logger/mason_logger.dart';
-import 'package:pmv/src/command/analyse.dart';
+import 'package:pmv/src/command/analyze.dart';
 import 'package:pmv/src/command/apply.dart';
 import 'package:pmv/src/command/upgrade.dart';
 import 'package:pmv/src/version.dart';
@@ -14,7 +14,7 @@ class PMVCliCommandRunner extends CompletionCommandRunner<int> {
           'pmv',
           'CLI tool for managing pubspec package version',
         ) {
-    addCommand(AnalyseSubPackageCommand(_logger));
+    addCommand(AnalyzeSubPackageCommand(_logger));
     addCommand(ApplySubPackageCommand(_logger));
     addCommand(UpgradeRootPackageCommand(_logger));
     argParser.addFlag(

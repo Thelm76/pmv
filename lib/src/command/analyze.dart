@@ -8,13 +8,13 @@ import 'package:pmv/src/extensions/dependency.dart';
 import 'package:pmv/src/file.dart';
 import 'package:pubspec/pubspec.dart';
 
-class AnalyseSubPackageCommand extends Command<int> {
-  AnalyseSubPackageCommand(this._logger) {
+class AnalyzeSubPackageCommand extends Command<int> {
+  AnalyzeSubPackageCommand(this._logger) {
     argParser.addOption(
       'output',
       abbr: 'o',
       help: 'The path of the output file.',
-      defaultsTo: './analyse.txt',
+      defaultsTo: './analyze.txt',
     );
     argParser.addFlag(
       'hide-file',
@@ -31,13 +31,13 @@ class AnalyseSubPackageCommand extends Command<int> {
   final Logger _logger;
 
   @override
-  String get name => 'analyse';
+  String get name => 'analyze';
 
   @override
-  String get description => 'Analyse package version in sub pubspec';
+  String get description => 'analyze package version in sub pubspec';
 
   @override
-  String get invocation => 'pmv analyse -o ./result.txt';
+  String get invocation => 'pmv analyze -o ./result.txt';
 
   @override
   Future<int> run() async {
@@ -49,25 +49,25 @@ class AnalyseSubPackageCommand extends Command<int> {
     Map<String, Dependency> allDevDependencies = {};
     Map<String, Dependency> allOverrideDependencies = {};
 
-    final progress = _logger.progress('Analyse in progress');
+    final progress = _logger.progress('analyze in progress');
 
     try {
-      // Analyse dependencies
+      // analyze dependencies
       final pubspecFiles = Glob(join('.', '**', 'pubspec.yaml'));
       for (final entity in pubspecFiles.listSync()) {
         final pubSpec = await PubSpec.loadFile(entity.path);
         final projectName = pubSpec.name ?? 'unknow';
 
-        allDependencies = _analysePubFile(
+        allDependencies = _analyzePubFile(
           projectName: projectName,
           pubSpecDep: pubSpec.dependencies,
           old: allDependencies,
         );
-        allDevDependencies = _analysePubFile(
+        allDevDependencies = _analyzePubFile(
             projectName: projectName,
             pubSpecDep: pubSpec.devDependencies,
             old: allDevDependencies);
-        allOverrideDependencies = _analysePubFile(
+        allOverrideDependencies = _analyzePubFile(
           projectName: projectName,
           pubSpecDep: pubSpec.dependencyOverrides,
           old: allOverrideDependencies,
@@ -76,7 +76,7 @@ class AnalyseSubPackageCommand extends Command<int> {
 
       // Write repport
       final file = FileHelper(output, _logger);
-      file.write(message: 'Analyse of ${DateTime.now()}\n', append: false);
+      file.write(message: 'analyze of ${DateTime.now()}\n', append: false);
       file.write(
         message: '\ndependencies:\n',
       );
@@ -106,8 +106,8 @@ class AnalyseSubPackageCommand extends Command<int> {
         multiOnly: multiOnly,
       );
 
-      progress.complete('Analyse done!');
-      _logger.info('Analyse write in file $output');
+      progress.complete('analyze done!');
+      _logger.info('analyze write in file $output');
 
       return ExitCode.success.code;
     } on Exception catch (error, st) {
@@ -119,7 +119,7 @@ class AnalyseSubPackageCommand extends Command<int> {
     }
   }
 
-  Map<String, Dependency> _analysePubFile({
+  Map<String, Dependency> _analyzePubFile({
     required String projectName,
     required Map<String, DependencyReference> pubSpecDep,
     Map<String, Dependency>? old,
@@ -159,7 +159,6 @@ class AnalyseSubPackageCommand extends Command<int> {
   }) async {
     file.startSection();
     dependencies.forEach((key, value) {
-      print("$key: ${value.isMultiFile}");
       if (!multiOnly || value.isMultiFile) {
         file.write(
           message: '$key:\n',
