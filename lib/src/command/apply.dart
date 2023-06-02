@@ -10,7 +10,7 @@ class ApplySubPackageCommand extends Command<int> {
     argParser.addOption(
       'source',
       abbr: 's',
-      help: 'The path of the source file (pmv_pubspec.yaml by default).',
+      help: 'The path of the reference pubspec file (pmv_pubspec.yaml by default).',
       defaultsTo: './pmv_pubspec.yaml',
     );
   }
@@ -22,14 +22,14 @@ class ApplySubPackageCommand extends Command<int> {
 
   @override
   String get description =>
-      'Apply package version specify in pmv_pubspec.yaml in sub pubspec';
+      'Apply package version specify in reference pubspec in sub pubspec';
 
   @override
   String get invocation => 'pmv apply -s ./pmv_pubspec.yaml';
 
   @override
   Future<int> run() async {
-    final progress = _logger.progress("Apply in progress");
+    final progress = _logger.progress("Apply reference pubspec version in progress");
     final rootFile = argResults?['source'] as String;
     int countFile = 0;
 

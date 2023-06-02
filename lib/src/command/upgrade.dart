@@ -10,7 +10,7 @@ class UpgradeRootPackageCommand extends Command<int> {
     argParser.addOption(
       'source',
       abbr: 's',
-      help: 'The path of the source file (pmv_pubspec.yaml by default).',
+      help: 'The path of the reference pubspec file (pmv_pubspec.yaml by default).',
       defaultsTo: './pmv_pubspec.yaml',
     );
     argParser.addFlag(
@@ -25,7 +25,7 @@ class UpgradeRootPackageCommand extends Command<int> {
   String get name => 'upgrade';
 
   @override
-  String get description => 'Upgrade package version in pmv_pubspec.yaml';
+  String get description => 'Upgrade package version in reference pubspec';
 
   @override
   String get invocation => 'pmv upgrade -s ./pmv_pubspec.yaml';
@@ -33,7 +33,7 @@ class UpgradeRootPackageCommand extends Command<int> {
   @override
   Future<int> run() async {
     final pubUpdater = PubUpdater();
-    final progress = _logger.progress("Upgrade in progress");
+    final progress = _logger.progress("Upgrade reference pubspec package version in progress");
     final rootFile = argResults?['source'] as String;
     final forceUpgradeOverrides = argResults?['upgrade-overrides'] as bool;
 

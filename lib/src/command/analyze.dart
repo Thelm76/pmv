@@ -49,7 +49,7 @@ class AnalyzeSubPackageCommand extends Command<int> {
     Map<String, Dependency> allDevDependencies = {};
     Map<String, Dependency> allOverrideDependencies = {};
 
-    final progress = _logger.progress('analyze in progress');
+    final progress = _logger.progress('Analyze sub project pubspec in progress');
 
     try {
       // analyze dependencies
