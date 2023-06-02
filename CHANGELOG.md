@@ -1,3 +1,9 @@
+## 0.1.0
+
+**Bug Fixes**
+
+- wording of analyze commande
+
 ## 0.0.4
 
 **Features**
@@ -13,7 +19,7 @@
 **Features**
 
 - **ci**: Add basic github ci
-- Add TU and analyse flag
+- Add TU and analyze flag
 - Improve log
 - Add example page 
 
