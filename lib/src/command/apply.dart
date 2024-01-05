@@ -1,8 +1,6 @@
 import 'package:args/command_runner.dart';
-import 'package:glob/glob.dart';
-import 'package:glob/list_local_fs.dart';
 import 'package:mason_logger/mason_logger.dart';
-import 'package:path/path.dart';
+import 'package:pmv/src/utils/pubspec_finder.dart';
 import 'package:pubspec/pubspec.dart';
 
 class ApplySubPackageCommand extends Command<int> {
@@ -10,7 +8,8 @@ class ApplySubPackageCommand extends Command<int> {
     argParser.addOption(
       'source',
       abbr: 's',
-      help: 'The path of the reference pubspec file (pmv_pubspec.yaml by default).',
+      help:
+          'The path of the reference pubspec file (pmv_pubspec.yaml by default).',
       defaultsTo: './pmv_pubspec.yaml',
     );
   }
@@ -29,7 +28,8 @@ class ApplySubPackageCommand extends Command<int> {
 
   @override
   Future<int> run() async {
-    final progress = _logger.progress("Apply reference pubspec version in progress");
+    final progress =
+        _logger.progress("Apply reference pubspec version in progress");
     final rootFile = argResults?['source'] as String;
     int countFile = 0;
 
@@ -37,9 +37,8 @@ class ApplySubPackageCommand extends Command<int> {
     final rootPubSpec = await PubSpec.loadFile(rootFile);
 
     //Apply version to sub pubspec
-    final pubspecFiles = Glob(join('.', '**', 'pubspec.yaml'));
-    for (final entity in pubspecFiles.listSync()) {
-      final pubSpec = await PubSpec.loadFile(entity.path);
+    final pubspecFiles = await PubspecFinder.findAll();
+    for (final (pubSpec, path) in pubspecFiles) {
       bool updateNeed = false;
 
       rootPubSpec.dependencies.forEach((key, rootDep) {
@@ -78,7 +77,7 @@ class ApplySubPackageCommand extends Command<int> {
       //Update yaml file
       if (updateNeed) {
         _logger.detail("${pubSpec.name} save");
-        pubSpec.save(entity.parent);
+        pubSpec.save(path);
         countFile++;
       }
     }

@@ -1,11 +1,9 @@
 import 'package:args/command_runner.dart';
-import 'package:glob/glob.dart';
-import 'package:glob/list_local_fs.dart';
 import 'package:mason_logger/mason_logger.dart';
-import 'package:path/path.dart';
 import 'package:pmv/src/entities/dependency.dart';
 import 'package:pmv/src/extensions/dependency.dart';
 import 'package:pmv/src/file.dart';
+import 'package:pmv/src/utils/pubspec_finder.dart';
 import 'package:pubspec/pubspec.dart';
 
 class AnalyzeSubPackageCommand extends Command<int> {
@@ -49,14 +47,14 @@ class AnalyzeSubPackageCommand extends Command<int> {
     Map<String, Dependency> allDevDependencies = {};
     Map<String, Dependency> allOverrideDependencies = {};
 
-    final progress = _logger.progress('Analyze sub project pubspec in progress');
+    final progress =
+        _logger.progress('Analyze sub project pubspec in progress');
 
     try {
       // analyze dependencies
-      final pubspecFiles = Glob(join('.', '**', 'pubspec.yaml'));
-      for (final entity in pubspecFiles.listSync()) {
-        final pubSpec = await PubSpec.loadFile(entity.path);
-        final projectName = pubSpec.name ?? 'unknow';
+      final pubspecFiles = await PubspecFinder.findAll();
+      for (final (pubSpec, _) in pubspecFiles) {
+        final projectName = pubSpec.name ?? 'unknown';
 
         allDependencies = _analyzePubFile(
           projectName: projectName,
